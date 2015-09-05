@@ -10,6 +10,7 @@ PKPaymentAuthorizationViewControllerDelegate
 {
     NSString *merchantId;
     NSString *callbackId;
+    Boolean didAuthorize;
 }
 
 - (void)setMerchantId:(CDVInvokedUrlCommand*)command;
