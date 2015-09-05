@@ -76,7 +76,12 @@ ApplePay.getAllowsApplePay(function() {
 		alert('Your token is: ' + token.id);
 	}, function() {
 		alert('Error getting payment info');
-	}, '10.00', 'Delicious Cake', 'USD');
+	}, [
+          ['10.00', 'cake'],
+          ['5.00', 'beer'],
+          ['-1.00', 'discount'],
+          ['14.00', 'COMPANY_NAME']
+        ], 'USD');
 
 }, function() {
 	alert('User does not have apple pay available');
