@@ -15,7 +15,7 @@
     merchantId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"ApplePayMerchant"];
     [Stripe setDefaultPublishableKey:StripePublishableKey];
     self = (CDVApplePay*)[super initWithWebView:(UIWebView*)theWebView];
-    
+    didAuthorize = false;
     return self;
 }
 
@@ -74,16 +74,18 @@
     
     PKPaymentRequest *request = [Stripe
                                  paymentRequestWithMerchantIdentifier:merchantId];
+
+    NSMutableArray *pkItems = [NSMutableArray array];
+    NSArray *items = [command.arguments objectAtIndex:0];
+    for (int i = 0; i < [items count]; i++) {
+        NSArray *singleItemArray = (NSArray *)[items objectAtIndex:i];
+        NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:[singleItemArray objectAtIndex:0]];
+        PKPaymentSummaryItem *pkItem = [PKPaymentSummaryItem summaryItemWithLabel:(NSString *)[singleItemArray objectAtIndex:1] amount:amount];
+        [pkItems addObject:pkItem];
+    }
+    request.paymentSummaryItems = pkItems;
     
-    // Configure your request here.
-    NSString *label = [command.arguments objectAtIndex:1];
-    NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:[command.arguments objectAtIndex:0]];
-    request.paymentSummaryItems = @[
-                                    [PKPaymentSummaryItem summaryItemWithLabel:label
-                                                                        amount:amount]
-                                    ];
-    
-    NSString *cur = [command.arguments objectAtIndex:2];
+    NSString *cur = [command.arguments objectAtIndex:1];
     request.currencyCode = cur;
     
     callbackId = command.callbackId;
@@ -105,6 +107,7 @@
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller
                        didAuthorizePayment:(PKPayment *)payment
                                 completion:(void (^)(PKPaymentAuthorizationStatus))completion {
+    didAuthorize = true;
     [self handlePaymentAuthorizationWithPayment:payment completion:completion];
 }
 
@@ -161,15 +164,17 @@
             CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary: message];
             [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         }
-        
     }];
 }
  
  
  - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller {
-     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"user cancelled apple pay"];
-     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+     if(!didAuthorize){
+         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"user cancelled apple pay"];
+         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+     }
+     didAuthorize = false;
      [self.viewController dismissViewControllerAnimated:YES completion:nil];
  }
- 
+
 @end
