@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVPlugin.h>
+#import <Cordova/CDV.h>
 #import <PassKit/PassKit.h>
 
 

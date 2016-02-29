@@ -9,8 +9,8 @@
 
 @implementation CDVApplePay
 
-- (void)pluginInitialize
-{
+- (void)pluginInitialize {
+    NSLog(@"Starting ApplePay plugin");
     NSString * StripePublishableKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"StripePublishableKey"];
     merchantId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"ApplePayMerchant"];
     [Stripe setDefaultPublishableKey:StripePublishableKey];
