@@ -38,7 +38,31 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 		<config-file target="*-Info.plist" parent="ApplePayMerchant">
             <string>$APPLE_PAY_MERCHANT</string>
         </config-file>
-		
+
+        <config-file parent="com.apple.developer.in-app-payments" target="*/Entitlements-Release.plist">
+             <array>
+              <string>$APPLE_PAY_MERCHANT</string>
+            </array>
+        </config-file>
+
+        <config-file parent="com.apple.developer.in-app-payments" target="*/Entitlements-Debug.plist">
+                <array>
+                  <string>$APPLE_PAY_MERCHANT</string>
+                </array>
+        </config-file>
+
+        <config-file parent="com.apple.developer.pass-type-identifiers" target="*/Entitlements-Release.plist">
+           <array>
+            <string>$(TeamIdentifierPrefix)*</string>
+          </array>
+        </config-file>
+
+        <config-file parent="com.apple.developer.pass-type-identifiers" target="*/Entitlements-Debug.plist">
+          <array>
+            <string>$(TeamIdentifierPrefix)*</string>
+          </array>
+        </config-file>
+
         <config-file target="*.entitlements" parent="com.apple.developer.in-app-payments">
 			<array>
 				<string>$APPLE_PAY_MERCHANT</string>
